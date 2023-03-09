@@ -18,5 +18,5 @@ public class CryptoRateDto {
     private LocalDateTime priceDate;
     private String symbol;
     private BigDecimal price;
-    private UploadedFileEntity uploadedFileEntity;
+    private Long uploadedFileEntityId;
 }

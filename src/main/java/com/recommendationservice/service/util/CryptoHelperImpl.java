@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
 public class CryptoHelperImpl {
     private CryptoHelperImpl(){}
     public static CryptoResponseDto cryptoValueToCryptoResponseDto(CryptoEntity entity) {

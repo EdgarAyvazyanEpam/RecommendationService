@@ -53,9 +53,9 @@ public class CryptoValueControllerIntegrationTests extends MySqlDBIntegrationTes
     @Test
     public void testGetCryptoValuesBySymbolsShouldReturnOk() throws Exception {
         removeAndFill();
-        this.mockMvc
+        String contentAsString = this.mockMvc
                 .perform(get(TestApiConstants.API_CRYPTOS_CRYPTO, TestValueConstants.CRYPTO_VALUE_SYMBOL))
-//                .andDo(MockMvcResultHandlers.print()) done
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isNotEmpty())
                 .andExpect(jsonPath("$").isArray())
@@ -64,6 +64,7 @@ public class CryptoValueControllerIntegrationTests extends MySqlDBIntegrationTes
                 .andExpect(jsonPath("$.[0].price").isNumber())
                 .andExpect(jsonPath("$.[0].priceDate").isNotEmpty())
                 .andReturn().getResponse().getContentAsString();
+        System.out.println(contentAsString);
     }
 
     @Test
@@ -81,7 +82,7 @@ public class CryptoValueControllerIntegrationTests extends MySqlDBIntegrationTes
         removeAndFill();
         this.mockMvc
                 .perform(get(TestApiConstants.PATH_MIN + TestValueConstants.CRYPTO_VALUE_SYMBOL))
-//                .andDo(MockMvcResultHandlers.print())
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isNotEmpty())
                 .andExpect(jsonPath("$.symbol").value(TestValueConstants.CRYPTO_VALUE_SYMBOL))
@@ -108,7 +109,7 @@ public class CryptoValueControllerIntegrationTests extends MySqlDBIntegrationTes
         removeAndFill();
         this.mockMvc
                 .perform(get(TestApiConstants.PATH_MAX + TestValueConstants.CRYPTO_VALUE_SYMBOL))
-//                .andDo(MockMvcResultHandlers.print())
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isNotEmpty())
                 .andExpect(jsonPath("$.symbol").value(TestValueConstants.CRYPTO_VALUE_SYMBOL))
@@ -135,7 +136,7 @@ public class CryptoValueControllerIntegrationTests extends MySqlDBIntegrationTes
         removeAndFill();
         this.mockMvc
                 .perform(get(TestApiConstants.PATH_OLDEST + TestValueConstants.CRYPTO_VALUE_SYMBOL))
-//                .andDo(MockMvcResultHandlers.print())
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isNotEmpty())
                 .andExpect(jsonPath("$.symbol").value(TestValueConstants.CRYPTO_VALUE_SYMBOL))
@@ -162,7 +163,7 @@ public class CryptoValueControllerIntegrationTests extends MySqlDBIntegrationTes
         removeAndFill();
         this.mockMvc
                 .perform(get(TestApiConstants.PATH_NEWEST + TestValueConstants.CRYPTO_VALUE_SYMBOL))
-//                .andDo(MockMvcResultHandlers.print())
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isNotEmpty())
                 .andExpect(jsonPath("$.symbol").value(TestValueConstants.CRYPTO_VALUE_SYMBOL))
