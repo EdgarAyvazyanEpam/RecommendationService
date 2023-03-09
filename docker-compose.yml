@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  recommendation_db:
+    container_name: recommendation_db
+    image: mysql:8.0
+    environment:
+        - MYSQL_USER=root_user
+        - MYSQL_PASSWORD=Root1
+        - MYSQL_DATABASE=recommendation
+        - MYSQL_ROOT_PASSWORD=Root1
+    volumes:
+      - dbvol:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: always
+  app:
+    build:
+      context: .
+    container_name: recommendation_service_app
+    image: recommendation-service:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - recommendation_db
+    environment:
+        - MYSQL_HOST=recommendation_db
+        - MYSQL_USERNAME=root_user
+        - MYSQL_PASSWORD=Root1
+        - MYSQL_DATABASE=recommendation
+        - MYSQL_PORT=3306
+volumes:
+  dbvol:
