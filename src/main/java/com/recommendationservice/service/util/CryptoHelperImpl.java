@@ -2,7 +2,6 @@ package com.recommendationservice.service.util;
 
 import com.recommendationservice.domain.CryptoResponseDto;
 import com.recommendationservice.entity.CryptoEntity;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 

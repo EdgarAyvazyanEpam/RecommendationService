@@ -48,7 +48,6 @@ public class CryptoValueRecServiceEventListener {
             log.info("Starting to read Crypto Value csv file");
             log.info("Already usefully processed file (by name) will not be imported to avoid duplication");
 
-
             if (cryptoValueCsvFiles == null || cryptoValueCsvFiles.isEmpty()) {
                 log.warn("There is no crypto value csv file to process");
             } else {
@@ -69,10 +68,10 @@ public class CryptoValueRecServiceEventListener {
             try {
                 File file = ResourceUtils.getFile("classpath:" + cryptoValueCsvFile);
                 uploadedFileEntity = cryptoImportService.processUploadedFile(convertFileToMultipartFile(file));
-                log.warn(String.format("Crypto values are imported from :%s", cryptoValueCsvFile));
+                log.warn("Crypto values are imported from {}", cryptoValueCsvFile);
             } catch (Exception ex) {
                 cryptoImportService.updateStatus(uploadedFileEntity, UploadedFIleStatusEnum.PROCESSING_FAILED);
-                log.warn(String.format("Could not import crypto values from :%s", cryptoValueCsvFile));
+                log.warn("Could not import crypto values from {}", cryptoValueCsvFile);
                 log.error(ex.getMessage());
             }
         }

@@ -12,7 +12,6 @@ public class CryptoValueNotFoundException extends RuntimeException {
         super(message);
         this.symbol = symbol;
     }
-
     @Override
     public String getMessage() {
         return String.format("%s: %s", super.getMessage(), this.symbol);

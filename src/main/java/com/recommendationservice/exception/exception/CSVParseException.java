@@ -12,11 +12,6 @@ public class CSVParseException extends RuntimeException {
         this.originalFileName = originalFileName;
     }
 
-    public CSVParseException(String message, String originalFileName, Throwable cause) {
-        super(message, cause);
-        this.originalFileName = originalFileName;
-    }
-
     @Override
     public String getMessage() {
         return String.format("%s : %s", super.getMessage(), this.originalFileName);

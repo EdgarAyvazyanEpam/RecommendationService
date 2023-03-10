@@ -26,15 +26,15 @@ public interface CryptoRepository extends JpaRepository<CryptoEntity, Long> {
     Optional<CryptoEntity> findFirstBySymbolOrderByPriceDesc(String symbol);
 
     //TODO procedure
-    @Query(value = "select *, (select 100 * ((crypto1.price - min(crypto2.price)) / (max(crypto2.price) - min(crypto2.price))) " +
-            " from crypto_values crypto2) as normalized_crypto_value from crypto_values crypto1 where crypto1.symbol = :symbol " +
-            " and date(crypto1.price_date) = :date order by normalized_crypto_value desc limit 1", nativeQuery = true)
+    @Query(value = "select *, (select 100 * ((firstcrypto.price - min(comparablecrypto.price)) / (max(comparablecrypto.price) - min(comparablecrypto.price))) " +
+            " from crypto_values comparablecrypto) as normalized_crypto_value from crypto_values firstcrypto where firstcrypto.symbol = :symbol " +
+            " and date(firstcrypto.price_date) = :date order by normalized_crypto_value desc limit 1", nativeQuery = true)
     Optional<CryptoEntity> findNormalizedByCryptoValueAndDate(@Param("symbol") String symbol, @Param("date") LocalDate date);
 
 
     //TODO procedure
-    @Query(value = "select *, (select 100 * ((crypto1.price - min(crypto2.price)) / (max(crypto2.price) - min(crypto2.price))) " +
-            " from crypto_values crypto2) as normalized_crypto_value from crypto_values crypto1 where crypto1.symbol = :symbol " +
+    @Query(value = "select *, (select 100 * ((firstcrypto.price - min(comparablecrypto.price)) / (max(comparablecrypto.price) - min(comparablecrypto.price))) " +
+            " from crypto_values comparablecrypto) as normalized_crypto_value from crypto_values firstcrypto where firstcrypto.symbol = :symbol " +
             " order by normalized_crypto_value\n", nativeQuery = true)
     List<CryptoEntity> findNormalizedByCryptoValue(@Param("symbol") String symbol);
 }

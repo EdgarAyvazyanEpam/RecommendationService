@@ -113,7 +113,7 @@ public class CryptoImportServiceImpl implements CryptoImportService {
 
     private void validateFile(MultipartFile file) {
         CryptoValueImportUtility.validateContent(file);
-        CryptoValueImportUtility.validateExtension(file, FileExtension.CSV);
+        CryptoValueImportUtility.validateExtension(file);
     }
 
     static class CryptoValueImportUtility {
@@ -128,10 +128,10 @@ public class CryptoImportServiceImpl implements CryptoImportService {
             }
         }
 
-        private static void validateExtension(MultipartFile file, FileExtension expectedExtension) {
-            if (!isFileExtensionCorrect(file, expectedExtension.getExtension())) {
+        private static void validateExtension(MultipartFile file) {
+            if (!isFileExtensionCorrect(file, FileExtension.CSV.getExtension())) {
                 log.error("Unsupported file type:");
-                throw new InvalidFileFormatException("Wrong file type. Should be: " + expectedExtension.getExtension());
+                throw new InvalidFileFormatException("Wrong file type. Should be: " + FileExtension.CSV.getExtension());
             }
         }
 

@@ -2,7 +2,6 @@ package com.recommendationservice.domain;
 
 import java.time.LocalDateTime;
 
-import com.recommendationservice.entity.UploadedFileEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

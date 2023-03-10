@@ -53,7 +53,6 @@ public class CSVFileProcessController {
                 .body(new CryptoValueCsvUploadResponse("File uploaded by name: " + file.getOriginalFilename() + "!"));
     }
 
-
     @PutMapping(value = "/update-crypto-csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperation(
             nickname = "Upload CSV file",

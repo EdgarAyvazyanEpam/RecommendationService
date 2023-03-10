@@ -1,6 +1,6 @@
 package com.recommendationservice.exception.response;
 
-import com.recommendationservice.exception.enumeration.ErrorType;
+import com.recommendationservice.exception.enumeration.ApiErrorType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +20,5 @@ public class ErrorResponseDto {
 
     private String timeStamp;
 
-    private ErrorType type;
+    private ApiErrorType apiErrorType;
 }

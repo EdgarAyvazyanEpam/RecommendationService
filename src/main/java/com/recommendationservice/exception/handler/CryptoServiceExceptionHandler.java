@@ -1,7 +1,7 @@
 package com.recommendationservice.exception.handler;
 
-import com.recommendationservice.exception.enumeration.ErrorConstants;
-import com.recommendationservice.exception.enumeration.ErrorType;
+import com.recommendationservice.exception.enumeration.ErrorTypesConstants;
+import com.recommendationservice.exception.enumeration.ApiErrorType;
 import com.recommendationservice.exception.exception.CSVParseException;
 import com.recommendationservice.exception.exception.CryptoValueNotFoundException;
 import com.recommendationservice.exception.exception.FileProcessingException;
@@ -28,19 +28,19 @@ public class CryptoServiceExceptionHandler {
 
     @ExceptionHandler(value = {FileProcessingException.class})
     public ResponseEntity<ErrorResponseDto> handleIOException(FileProcessingException ex) {
-        log.error(ErrorConstants.IO_EXCEPTION + ex.getMessage(), ex);
+        log.error(ErrorTypesConstants.IO_EXCEPTION + ex.getMessage(), ex);
         ErrorResponseDto errorResponse = new ErrorResponseDto(String.valueOf(HttpStatus.BAD_REQUEST.value()),
-                ErrorConstants.ALREADY_EXISTS.getErrorMessage(), ex.getMessage(), LocalDateTime.now().toString(),
-                ErrorType.INVALID_REQUEST_ERROR);
+                ErrorTypesConstants.ALREADY_EXISTS.getErrorMessage(), ex.getMessage(), LocalDateTime.now().toString(),
+                ApiErrorType.INVALID_REQUEST_ERROR);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = {InvalidFileFormatException.class})
     public ResponseEntity<ErrorResponseDto> handleIOException(InvalidFileFormatException ex) {
-        log.error(ErrorConstants.IO_EXCEPTION + ex.getMessage(), ex);
+        log.error(ErrorTypesConstants.IO_EXCEPTION + ex.getMessage(), ex);
         ErrorResponseDto errorResponse = new ErrorResponseDto(String.valueOf(HttpStatus.BAD_REQUEST.value()),
-                ErrorConstants.INCORRECT_FILE_EXTENSION.getErrorMessage(), ex.getMessage(), LocalDateTime.now().toString(),
-                ErrorType.INVALID_REQUEST_ERROR);
+                ErrorTypesConstants.INCORRECT_FILE_EXTENSION.getErrorMessage(), ex.getMessage(), LocalDateTime.now().toString(),
+                ApiErrorType.INVALID_REQUEST_ERROR);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -50,17 +50,17 @@ public class CryptoServiceExceptionHandler {
         final HttpStatus notFound = HttpStatus.NOT_FOUND;
 
         ErrorResponseDto errorResponse = new ErrorResponseDto(String.valueOf(notFound.value()),
-                ErrorConstants.NOT_FOUND_ERROR_TITLE.getErrorMessage(), ex.getMessage(), LocalDateTime.now().toString(),
-                ErrorType.INVALID_REQUEST_ERROR);
+                ErrorTypesConstants.NOT_FOUND_ERROR.getErrorMessage(), ex.getMessage(), LocalDateTime.now().toString(),
+                ApiErrorType.INVALID_REQUEST_ERROR);
         return new ResponseEntity<>(errorResponse, notFound);
     }
 
     @ExceptionHandler(value = {IOException.class})
     public ResponseEntity<ErrorResponseDto> handleIOException(IOException ex) {
-        log.error(ErrorConstants.IO_EXCEPTION + ex.getMessage(), ex);
+        log.error(ErrorTypesConstants.IO_EXCEPTION + ex.getMessage(), ex);
         ErrorResponseDto errorResponse = new ErrorResponseDto(String.valueOf(HttpStatus.BAD_REQUEST.value()),
-                ErrorConstants.IO_ERROR_TITLE.getErrorMessage(), ex.getMessage(), LocalDateTime.now().toString(),
-                ErrorType.INVALID_REQUEST_ERROR);
+                ErrorTypesConstants.IO_ERROR.getErrorMessage(), ex.getMessage(), LocalDateTime.now().toString(),
+                ApiErrorType.INVALID_REQUEST_ERROR);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -77,8 +77,8 @@ public class CryptoServiceExceptionHandler {
 
 
         ErrorResponseDto errorResponse = new ErrorResponseDto(String.valueOf(badRequest.value()),
-                ErrorConstants.INVALID_INPUT_ERROR_TITLE.getErrorMessage(), messages.toString(), LocalDateTime.now().toString(),
-                ErrorType.INVALID_REQUEST_ERROR);
+                ErrorTypesConstants.INVALID_INPUT_ERROR.getErrorMessage(), messages.toString(), LocalDateTime.now().toString(),
+                ApiErrorType.INVALID_REQUEST_ERROR);
         return new ResponseEntity<>(errorResponse, badRequest);
     }
 
@@ -94,8 +94,8 @@ public class CryptoServiceExceptionHandler {
                     constraintViolation.getMessage())).toList();
 
         ErrorResponseDto errorResponse = new ErrorResponseDto(String.valueOf(badRequest.value()),
-                ErrorConstants.INVALID_INPUT_ERROR_TITLE.getErrorMessage(), messages.toString(), LocalDateTime.now().toString(),
-                ErrorType.INVALID_REQUEST_ERROR);
+                ErrorTypesConstants.INVALID_INPUT_ERROR.getErrorMessage(), messages.toString(), LocalDateTime.now().toString(),
+                ApiErrorType.INVALID_REQUEST_ERROR);
         return new ResponseEntity<>(errorResponse, badRequest);
     }
 
@@ -105,8 +105,8 @@ public class CryptoServiceExceptionHandler {
         log.error("Csv Required Field Empty Exception: " + message, ex);
 
         ErrorResponseDto errorResponse = new ErrorResponseDto(String.valueOf(HttpStatus.BAD_REQUEST.value()),
-                ErrorConstants.IO_ERROR_TITLE.getErrorMessage(), message, LocalDateTime.now().toString(),
-                ErrorType.INVALID_REQUEST_ERROR);
+                ErrorTypesConstants.IO_ERROR.getErrorMessage(), message, LocalDateTime.now().toString(),
+                ApiErrorType.INVALID_REQUEST_ERROR);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }

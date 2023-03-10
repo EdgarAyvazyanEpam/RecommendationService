@@ -7,9 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum FileExtension {
     JPG("jpg"),
-
     PNG("png"),
-
     CSV("csv");
     private final String extension;
 
@@ -17,7 +15,4 @@ public enum FileExtension {
         return extension;
     }
 
-    public String getDotExtension() {
-        return "." + extension;
-    }
 }

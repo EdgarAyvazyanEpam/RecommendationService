@@ -43,12 +43,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class CryptoValueControllerIntegrationTests extends MySqlDBIntegrationTestConfiguration {
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private CryptoRepository cryptoValueRepository;
-    @Autowired
-    private UploadedFileRepository uploadedFileRepository;
+    private final MockMvc mockMvc;
+    private final CryptoRepository cryptoValueRepository;
+    private final UploadedFileRepository uploadedFileRepository;
+
+    public CryptoValueControllerIntegrationTests(MockMvc mockMvc, CryptoRepository cryptoValueRepository, UploadedFileRepository uploadedFileRepository) {
+        this.mockMvc = mockMvc;
+        this.cryptoValueRepository = cryptoValueRepository;
+        this.uploadedFileRepository = uploadedFileRepository;
+    }
 
     @Test
     public void testGetCryptoValuesBySymbolsShouldReturnOk() throws Exception {
