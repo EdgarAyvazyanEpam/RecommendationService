@@ -3,7 +3,7 @@ package com.recommendationservice;
 import com.recommendationservice.entity.UploadedFileEntity;
 import com.recommendationservice.enums.UploadedFIleStatusEnum;
 import com.recommendationservice.service.CryptoImportService;
-import com.recommendationservice.service.impl.CryptoServiceImpl;
+import com.recommendationservice.service.impl.CryptoValueServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +31,10 @@ public class CryptoValueRecServiceEventListener {
     @Value("${csv.file.storage.files}")
     private List<String> cryptoValueCsvFiles;
 
-    private CryptoServiceImpl cryptoService;
-
     private CryptoImportService cryptoImportService;
 
     @Autowired
-    public CryptoValueRecServiceEventListener(CryptoServiceImpl cryptoService, CryptoImportService cryptoImportService) {
-        this.cryptoService = cryptoService;
+    public CryptoValueRecServiceEventListener(CryptoImportService cryptoImportService) {
         this.cryptoImportService = cryptoImportService;
     }
 

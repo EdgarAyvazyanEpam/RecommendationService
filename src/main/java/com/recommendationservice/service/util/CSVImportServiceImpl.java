@@ -1,6 +1,5 @@
-package com.recommendationservice.service.csvservice.impl;
+package com.recommendationservice.service.util;
 
-import com.recommendationservice.csv.helper.CSVCryptoHelper;
 import com.recommendationservice.domain.CryptoRateDto;
 import com.recommendationservice.entity.UploadedFileEntity;
 import com.recommendationservice.service.csvservice.CSVService;
@@ -13,9 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Slf4j
-public class CSVServiceImpl implements CSVService {
+public class CSVImportServiceImpl implements CSVService {
     @Override
     public List<CryptoRateDto> readCryptoRateDtos(MultipartFile file, UploadedFileEntity uploadedFileEntity) {
-        return CSVCryptoHelper.csvToCryptoDto(file, uploadedFileEntity);
+        return CSVCryptoValueHelper.csvToCryptoDto(file, uploadedFileEntity);
     }
 }

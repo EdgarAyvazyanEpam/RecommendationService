@@ -1,4 +1,4 @@
-package com.recommendationservice.csv.helper;
+package com.recommendationservice.service.util;
 
 import com.recommendationservice.domain.CryptoRateDto;
 import com.recommendationservice.entity.UploadedFileEntity;
@@ -23,9 +23,9 @@ import java.util.TimeZone;
 
 @Slf4j
 @Component
-public class CSVCryptoHelper {
+public class CSVCryptoValueHelper {
 
-    private CSVCryptoHelper() {
+    private CSVCryptoValueHelper() {
 
     }
 
@@ -58,7 +58,7 @@ public class CSVCryptoHelper {
         } catch (IOException e) {
             String message = "Fail to parse CSV file";
             log.error(message, e);
-            throw new CSVParseException(message, file.getOriginalFilename());
+            throw new CSVParseException(message + " " +  file.getOriginalFilename());
         }
     }
 

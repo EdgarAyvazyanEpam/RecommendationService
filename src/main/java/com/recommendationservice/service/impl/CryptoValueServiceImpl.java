@@ -22,7 +22,7 @@ import java.util.List;
 @Validated
 @AllArgsConstructor
 @Service
-public class CryptoServiceImpl implements CryptoService {
+public class CryptoValueServiceImpl implements CryptoService {
 
     private final CryptoRepository cryptoRepository;
     private final ModelMapper modelMapper;
@@ -32,7 +32,7 @@ public class CryptoServiceImpl implements CryptoService {
         log.debug("Calling CryptoService.getCryptoValuesBySymbol method");
         List<CryptoEntity> cryptoEntityBySymbol = cryptoRepository.findCryptoValueBySymbol(symbol.toUpperCase());
         if (cryptoEntityBySymbol.isEmpty()) {
-            throw new CryptoValueNotFoundException("The values could not be found by", symbol);
+            throw new CryptoValueNotFoundException("The values could not be found by " + symbol);
         }
         log.info("Found the following count for the requested crypto value:" + cryptoEntityBySymbol.size());
 
@@ -47,7 +47,7 @@ public class CryptoServiceImpl implements CryptoService {
         log.debug("Calling CryptoValueService.getOldestCryptoValueBySymbol method");
 
         final CryptoEntity oldestCryptoValue = cryptoRepository.findFirstBySymbolOrderByPriceDateAsc(symbol)
-                .orElseThrow(() -> new CryptoValueNotFoundException("The oldest value could not be found for the crypto value", symbol));
+                .orElseThrow(() -> new CryptoValueNotFoundException("The oldest value could not be found for the crypto value " + symbol));
 
         log.info("Found the following the oldest value for the requested crypto value: " + symbol);
 
@@ -59,7 +59,7 @@ public class CryptoServiceImpl implements CryptoService {
         log.debug("Calling CryptoValueService.getNewestCryptoValueBySymbol method");
 
         final CryptoEntity newestCryptoValue = cryptoRepository.findFirstBySymbolOrderByPriceDateDesc(symbol)
-                .orElseThrow(() -> new CryptoValueNotFoundException("The newest value could not be found for the crypto value", symbol));
+                .orElseThrow(() -> new CryptoValueNotFoundException("The newest value could not be found for the crypto value " + symbol));
 
         log.info("Found the following the newest value for the requested crypto value: " + symbol);
 
@@ -71,7 +71,7 @@ public class CryptoServiceImpl implements CryptoService {
         log.debug("Calling CryptoValueService.getMinCryptoValueBySymbol method");
 
         final CryptoEntity minCryptoValue = cryptoRepository.findFirstBySymbolOrderByPriceAsc(symbol)
-                .orElseThrow(() -> new CryptoValueNotFoundException("The min value could not be found for the crypto value", symbol));
+                .orElseThrow(() -> new CryptoValueNotFoundException("The min value could not be found for the crypto value " + symbol));
 
         log.info("Found the following the min value for the requested crypto value: " + symbol);
 
@@ -84,7 +84,7 @@ public class CryptoServiceImpl implements CryptoService {
         log.info(String.format("Requested to find the max value for the crypto value: %s", symbol));
 
         final CryptoEntity maxCryptoValue = cryptoRepository.findFirstBySymbolOrderByPriceDesc(symbol)
-                .orElseThrow(() -> new CryptoValueNotFoundException("The max value could not be found for the crypto value", symbol));
+                .orElseThrow(() -> new CryptoValueNotFoundException("The max value could not be found for the crypto value " + symbol));
 
         log.info("Found the following the max value for the requested crypto value: " + symbol);
 
@@ -95,7 +95,7 @@ public class CryptoServiceImpl implements CryptoService {
     public CryptoResponseDto getNormalizedByCryptoValueAndDate(String symbol, LocalDate date) {
         log.debug("Calling CryptoValueService.getNormalizedByCryptoValueAndDate method");
         final CryptoEntity normalizedCryptoValue = cryptoRepository.findNormalizedByCryptoValueAndDate(symbol, date).orElseThrow(
-                () -> new CryptoValueNotFoundException("The normalized value could not be found for the crypto value for the date: " + date, symbol));
+                () -> new CryptoValueNotFoundException("The normalized value could not be found for the crypto value for the date: " + date + " " + symbol));
 
         return CryptoHelperImpl.cryptoValueToCryptoResponseDto(normalizedCryptoValue);
     }
@@ -103,9 +103,9 @@ public class CryptoServiceImpl implements CryptoService {
     @Override
     public List<CryptoResponseDto> getNormalizedCryptoValue(String symbol) {
         log.debug("Calling CryptoValueService.getNormalizedCryptoValue method");
-        List<CryptoEntity> normalizedCryptoValues = cryptoRepository.findNormalizedByCryptoValue(symbol);
+        final List<CryptoEntity> normalizedCryptoValues = cryptoRepository.findNormalizedByCryptoValue(symbol);
         if (normalizedCryptoValues == null || normalizedCryptoValues.isEmpty()) {
-            throw new CryptoValueNotFoundException("The normalized values could not be found for the crypto value", symbol);
+            throw new CryptoValueNotFoundException("The normalized values could not be found for the crypto value " + symbol);
         }
 
         return CryptoHelperImpl.cryptoValuesToCryptoResponseDto(normalizedCryptoValues);

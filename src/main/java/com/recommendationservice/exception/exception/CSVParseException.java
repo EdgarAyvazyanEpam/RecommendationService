@@ -1,19 +1,10 @@
 package com.recommendationservice.exception.exception;
 
-import java.io.Serial;
+import lombok.experimental.StandardException;
 
+@StandardException
 public class CSVParseException extends RuntimeException {
-    @Serial
-    private static final long serialVersionUID = 7819403791835709422L;
-    private final String originalFileName;
-
-    public CSVParseException(String message, String originalFileName) {
+    public CSVParseException(String message) {
         super(message);
-        this.originalFileName = originalFileName;
-    }
-
-    @Override
-    public String getMessage() {
-        return String.format("%s : %s", super.getMessage(), this.originalFileName);
     }
 }

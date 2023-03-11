@@ -1,19 +1,17 @@
 package com.recommendationservice.exception.exception;
 
-import java.io.Serial;
+import lombok.experimental.StandardException;
 
+@StandardException
 public class CryptoValueNotFoundException extends RuntimeException {
-    @Serial
-    private static final long serialVersionUID = 1279560298094330394L;
-
-    private final String symbol;
-
-    public CryptoValueNotFoundException(String message, String symbol) {
-        super(message);
-        this.symbol = symbol;
+    public CryptoValueNotFoundException() {
     }
-    @Override
-    public String getMessage() {
-        return String.format("%s: %s", super.getMessage(), this.symbol);
+
+    public CryptoValueNotFoundException(String message) {
+        super(message);
+    }
+
+    public CryptoValueNotFoundException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

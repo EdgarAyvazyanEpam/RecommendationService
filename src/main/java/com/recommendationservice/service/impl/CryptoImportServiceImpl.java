@@ -12,6 +12,7 @@ import com.recommendationservice.repository.UploadedFileRepository;
 import com.recommendationservice.service.CryptoImportService;
 import com.recommendationservice.service.csvservice.CSVService;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -31,16 +32,8 @@ public class CryptoImportServiceImpl implements CryptoImportService {
   private final CryptoRepository cryptoRepository;
   private final ModelMapper modelMapper;
   private final UploadedFileRepository uploadedFileRepository;
-  public static final String TYPE = "text/csv";
 
-  @Override
-  public List<CryptoEntity> cryptoProcess(MultipartFile file,
-      UploadedFileEntity uploadedFileEntity) {
-    return cryptoRepository.saveAll(
-        csvService.readCryptoRateDtos(file, uploadedFileEntity).stream()
-            .map(cryptoRateDto -> modelMapper.map(cryptoRateDto, CryptoEntity.class)).toList());
-  }
-
+  @Transactional
   @Override
   public UploadedFileEntity processUploadedFile(
       MultipartFile file) {
@@ -50,9 +43,16 @@ public class CryptoImportServiceImpl implements CryptoImportService {
       cryptoProcess(file, entity);
       return entity;
     }else {
-        throw new FileProcessingException("File processing fail for:", "Uploaded file");
+        throw new FileProcessingException("File processing fail for Uploaded file.");
     }
   }
+    @Override
+    public List<CryptoEntity> cryptoProcess(MultipartFile file,
+                                            UploadedFileEntity uploadedFileEntity) {
+        return cryptoRepository.saveAll(
+                csvService.readCryptoRateDtos(file, uploadedFileEntity).stream()
+                        .map(cryptoRateDto -> modelMapper.map(cryptoRateDto, CryptoEntity.class)).toList());
+    }
 
   @Override
   public void updateCrypto(MultipartFile file, UploadedFileEntity uploadedFileEntity) {
@@ -86,9 +86,8 @@ public class CryptoImportServiceImpl implements CryptoImportService {
     if (uploadedFileEntity.isEmpty()) {
       return saveUploadedFile(file);
     } else {
-      throw new FileProcessingException(
-          String.format("The file already has been processed successfully in: %s",
-              uploadedFileEntity.get().getCreationDate()), file.getOriginalFilename());
+      throw new FileProcessingException("The file already has been processed successfully in: " +
+              uploadedFileEntity.get().getCreationDate() + " " + file.getOriginalFilename());
     }
   }
 
@@ -101,7 +100,6 @@ public class CryptoImportServiceImpl implements CryptoImportService {
         .build();
     return uploadedFileRepository.saveAndFlush(entity);
   }
-  @Transactional
   @Override
   public void processUpdateUploadedFile(MultipartFile file) {
     if (file != null) {
@@ -135,12 +133,11 @@ public class CryptoImportServiceImpl implements CryptoImportService {
             }
         }
 
-        private static boolean isFileExtensionCorrect(MultipartFile file, String expectedExtension) {
-            String fileName = file.getOriginalFilename();
-            return fileName != null && expectedExtension.equalsIgnoreCase(getFileExtension(fileName));
+        private static boolean isFileExtensionCorrect(@NonNull MultipartFile file, String expectedExtension) {
+            return file.getOriginalFilename() != null && getFileExtension(file.getOriginalFilename()).equalsIgnoreCase(expectedExtension);
         }
 
-        private static String getFileExtension(String fileName) {
+        private static String getFileExtension(@NonNull String fileName) {
             return fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
         }
     }
@@ -148,12 +145,12 @@ public class CryptoImportServiceImpl implements CryptoImportService {
   private UploadedFileEntity updateUploadedFileDB(MultipartFile file) throws FileProcessingException {
     Optional<UploadedFileEntity> uploadedFileEntity = uploadedFileRepository
         .findUploadedFileEntityByFileName(file.getOriginalFilename());
-    if (uploadedFileEntity.isPresent()) {
-      uploadedFileEntity.get().setFileStatus(UploadedFIleStatusEnum.UPDATED);
-      return uploadedFileEntity.get();
-    } else {
-      throw new FileProcessingException(
-              "Cannot fined corresponding file in DB by name: %s", file.getOriginalFilename());
-    }
+
+     uploadedFileEntity.ifPresentOrElse(
+            value -> uploadedFileEntity.get().setFileStatus(UploadedFIleStatusEnum.UPDATED),
+             () -> {throw new FileProcessingException("Cannot find corresponding file in DB by name: " +
+                     file.getOriginalFilename());}
+    );
+     return uploadedFileEntity.get();
   }
 }

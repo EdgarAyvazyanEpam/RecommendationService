@@ -6,8 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum FileExtension {
-    JPG("jpg"),
-    PNG("png"),
     CSV("csv");
     private final String extension;
 
