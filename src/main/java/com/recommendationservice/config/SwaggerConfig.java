@@ -36,7 +36,7 @@ public class SwaggerConfig {
             .title("Swagger for Recommendation service")
             .version("1.0.0")
             .description("Recommendation service")
-            .contact(new Contact("Edgar Ayvazyan", "https://www.linkedin.com/in/edgar-ayvazyan-54586673/","edgar_ayvazyan@epam.com@email.com"))
+            .contact(new Contact("Edgar Ayvazyan", "https://www.linkedin.com/in/edgar-ayvazyan-54586673/","edgar_ayvazyan@epam.com"))
             .build();
   }
 }
