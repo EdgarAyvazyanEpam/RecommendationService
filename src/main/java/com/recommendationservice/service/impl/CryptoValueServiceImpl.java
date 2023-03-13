@@ -18,8 +18,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalDouble;
+import java.util.stream.Collectors;
+
+import static java.math.BigDecimal.*;
 
 @Slf4j
 @Validated
@@ -99,24 +105,72 @@ public class CryptoValueServiceImpl implements CryptoService {
 
         return CryptoHelperImpl.cryptoValueToCryptoResponseDto(maxCryptoValue);
     }
+@Override
+    public List<CryptoResponseDto> getNormalizedCryptoBySymbolAndDate(String symbol, LocalDate date) {
 
-    @Override
-    public CryptoResponseDto getNormalizedByCryptoValueAndDate(String symbol, LocalDate date) {
         log.debug("Calling CryptoValueService.getNormalizedByCryptoValueAndDate method");
-        final CryptoEntity normalizedCryptoValue = cryptoRepository.findNormalizedByCryptoValueAndDate(symbol, date).orElseThrow(
-                () -> new CryptoValueNotFoundException("The normalized value could not be found for the crypto value for the date: " + date + " " + symbol));
+        List<CryptoEntity> cryptoValueBySymbol = cryptoRepository.findCryptoValueBySymbol(symbol);
+        Double max = cryptoValueBySymbol
+                .stream()
+                .filter(cryptoEntity -> date.equals(cryptoEntity.getPriceDate().toLocalDate()))
+                .map(CryptoEntity::getPrice)
+                .mapToDouble(BigDecimal::doubleValue)
+                .max()
+                .getAsDouble();
 
-        return CryptoHelperImpl.cryptoValueToCryptoResponseDto(normalizedCryptoValue);
-    }
+        Double min = cryptoValueBySymbol
+                .stream()
+                .filter(cryptoEntity -> date.equals(cryptoEntity.getPriceDate().toLocalDate()))
+                .map(CryptoEntity::getPrice)
+                .mapToDouble(BigDecimal::doubleValue)
+                .min().getAsDouble();
 
-    @Override
-    public List<CryptoResponseDto> getNormalizedCryptoValue(String symbol) {
-        log.debug("Calling CryptoValueService.getNormalizedCryptoValue method");
-        final List<CryptoEntity> normalizedCryptoValues = cryptoRepository.findNormalizedByCryptoValue(symbol);
-        if (normalizedCryptoValues == null || normalizedCryptoValues.isEmpty()) {
-            throw new CryptoValueNotFoundException("The normalized values could not be found for the crypto value " + symbol);
+
+        List<CryptoEntity> collect = new ArrayList<>();
+        for (CryptoEntity cryptoEntity : cryptoValueBySymbol) {
+            if (valueOf(normalization(cryptoEntity.getPrice().doubleValue(), max, min)).doubleValue() > 0.0) {
+                collect.add(cryptoEntity);
+            }
         }
 
-        return CryptoHelperImpl.cryptoValuesToCryptoResponseDto(normalizedCryptoValues);
+        if (collect.isEmpty()) {
+            throw new CryptoValueNotFoundException("The normalized value could not be found for the crypto value for the date: " + date + " " + symbol);
+        }
+        return CryptoHelperImpl.cryptoValuesToCryptoResponseDto(collect);
+
+    }
+
+    private Double normalization(Double value, Double max, Double min){
+        return (value - min)/(max - min);
+    }
+@Override
+    public List<CryptoResponseDto> getNormalizedCryptoBySymbol(String symbol) {
+        log.debug("Calling CryptoValueService.getNormalizedCryptoValue method");
+        List<CryptoEntity> cryptoValueBySymbol = cryptoRepository.findCryptoValueBySymbol(symbol);
+        Double max = cryptoValueBySymbol
+                .stream()
+                .map(CryptoEntity::getPrice)
+                .mapToDouble(BigDecimal::doubleValue)
+                .max()
+                .getAsDouble();
+
+        Double min = cryptoValueBySymbol
+                .stream()
+                .map(CryptoEntity::getPrice)
+                .mapToDouble(BigDecimal::doubleValue)
+                .min().getAsDouble();
+
+
+        List<CryptoEntity> collect = new ArrayList<>();
+        for (CryptoEntity cryptoEntity : cryptoValueBySymbol) {
+            if (valueOf(normalization(cryptoEntity.getPrice().doubleValue(), max, min)).doubleValue() > 0.0) {
+                collect.add(cryptoEntity);
+            }
+        }
+
+        if (collect.isEmpty()) {
+            throw new CryptoValueNotFoundException("The normalized value could not be found for the crypto value for the date: " + " " + symbol);
+        }
+        return CryptoHelperImpl.cryptoValuesToCryptoResponseDto(collect);
     }
 }

@@ -16,6 +16,6 @@ public interface UploadedFileRepository extends JpaRepository<UploadedFileEntity
     Optional<UploadedFileEntity> findUploadedFileEntityById(Long id);
     Optional<UploadedFileEntity> findUploadedFileEntityByFileName(String fileName);
     @Modifying
-    @Query("update UploadedFileEntity up set up.fileStatus=:status where up.id=:id")
+    @Query("update UploadedFileEntity up set up.fileStatus= :status where up.id= :id")
     void updateUploadedFileById(@Param(value = "status") String status, @Param(value = "id") Long id);
 }

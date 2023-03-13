@@ -19,7 +19,7 @@ public interface CryptoService {
 
     CryptoResponseDto getMaxCryptoValueBySymbol(@NotNull @NotBlank String symbol);
 
-    CryptoResponseDto getNormalizedByCryptoValueAndDate(String symbol, LocalDate date);
+    List<CryptoResponseDto> getNormalizedCryptoBySymbolAndDate(String symbol, LocalDate date);
 
-    List<CryptoResponseDto> getNormalizedCryptoValue(String symbol);
+    List<CryptoResponseDto> getNormalizedCryptoBySymbol(String symbol);
 }
