@@ -39,7 +39,7 @@ public class CryptoValueRecServiceScheduler {
         this.cryptoImportService = cryptoImportService;
     }
 
-    @Scheduled(fixedRate = 60*60*10)
+    @Scheduled(fixedRate = 60*60*100)
     @Async
     public void startApp() {
 
@@ -49,7 +49,7 @@ public class CryptoValueRecServiceScheduler {
         if (isSchedulerEnabled()) {
             log.info("Event Listener is enabled");
             log.info("Starting to read Crypto Value csv file");
-            log.info("Already usefully processed file (by name) will not be imported to avoid duplication");
+            log.info("The file has been already processed successfully");
 
             if (cryptoValueCsvFiles == null || cryptoValueCsvFiles.isEmpty()) {
                 log.warn("There is no crypto value csv file to process");
