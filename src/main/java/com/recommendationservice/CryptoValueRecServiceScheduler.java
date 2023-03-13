@@ -34,12 +34,15 @@ public class CryptoValueRecServiceScheduler {
     private CryptoImportService cryptoImportService;
     private Set<String> cryptoValueCsvFiles;
 
+    @Value("${folder_path}")
+    private String folderPath;
+
     @Autowired
     public CryptoValueRecServiceScheduler(CryptoImportService cryptoImportService) {
         this.cryptoImportService = cryptoImportService;
     }
 
-    @Scheduled(fixedRate = 60 * 60 * 100)
+    @Scheduled(fixedRate = 60 * 60 * 10)
     @Async
     public void startApp() {
 
@@ -63,7 +66,7 @@ public class CryptoValueRecServiceScheduler {
 
     public Set<String> listFilesUsingJavaIO() {
         try {
-            return Stream.of(Objects.requireNonNull(ResourceUtils.getFile("classpath:" + "crypto-values/").listFiles()))
+            return Stream.of(Objects.requireNonNull(ResourceUtils.getFile("classpath:" + folderPath).listFiles()))
                     .filter(file -> !file.isDirectory())
                     .map(File::getName)
                     .filter(name -> name.endsWith(".csv"))
@@ -82,7 +85,7 @@ public class CryptoValueRecServiceScheduler {
         UploadedFileEntity uploadedFileEntity = null;
         for (String cryptoValueCsvFile : cryptoValueCsvFiles) {
             try {
-                File file = ResourceUtils.getFile("classpath:" + "crypto-values/" + cryptoValueCsvFile);
+                File file = ResourceUtils.getFile("classpath:" + folderPath + cryptoValueCsvFile);
                 uploadedFileEntity = cryptoImportService.processUploadedFile(convertFileToMultipartFile(file));
                 log.warn("Crypto values are imported from {}", cryptoValueCsvFile);
             } catch (Exception ex) {

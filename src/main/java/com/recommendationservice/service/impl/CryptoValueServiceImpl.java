@@ -21,6 +21,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.OptionalDouble;
 import java.util.stream.Collectors;
@@ -137,12 +138,14 @@ public class CryptoValueServiceImpl implements CryptoService {
         if (collect.isEmpty()) {
             throw new CryptoValueNotFoundException("The normalized value could not be found for the crypto value for the date: " + date + " " + symbol);
         }
-        return CryptoHelperImpl.cryptoValuesToCryptoResponseDto(collect);
 
+        List<CryptoResponseDto> cryptoResponseDtos = CryptoHelperImpl.cryptoValuesToCryptoResponseDto(collect);
+        cryptoResponseDtos.sort(Collections.reverseOrder());
+        return cryptoResponseDtos;
     }
 
     private Double normalization(Double value, Double max, Double min) {
-        return (value - min) / (max - min);
+        return (value - min)/(max - min); //(max-min)/min
     }
 
     @Override
@@ -173,6 +176,9 @@ public class CryptoValueServiceImpl implements CryptoService {
         if (collect.isEmpty()) {
             throw new CryptoValueNotFoundException("The normalized value could not be found for the crypto value for the date: " + " " + symbol);
         }
-        return CryptoHelperImpl.cryptoValuesToCryptoResponseDto(collect);
+
+        List<CryptoResponseDto> cryptoResponseDtos = CryptoHelperImpl.cryptoValuesToCryptoResponseDto(collect);
+        cryptoResponseDtos.sort(Collections.reverseOrder());
+        return cryptoResponseDtos;
     }
 }
