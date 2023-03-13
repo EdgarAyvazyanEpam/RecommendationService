@@ -2,45 +2,51 @@ package com.recommendationservice;
 
 import com.recommendationservice.entity.UploadedFileEntity;
 import com.recommendationservice.enums.UploadedFIleStatusEnum;
+import com.recommendationservice.exception.exception.InvalidUploadedFileException;
 import com.recommendationservice.service.CryptoImportService;
-import com.recommendationservice.service.impl.CryptoValueServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.stereotype.Component;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
-public class CryptoValueRecServiceEventListener {
+@Service
+public class CryptoValueRecServiceScheduler {
 
-    @Value("#{new Boolean('${event.listener.enabled}')}")
-    private Boolean isEventListenerEnabled;
-
-    @Value("${csv.file.storage.files}")
-    private List<String> cryptoValueCsvFiles;
-
+    @Value("#{new Boolean('${scheduler.enabled}')}")
+    private Boolean isSchedulerEnabled;
     private CryptoImportService cryptoImportService;
+    private Set<String> cryptoValueCsvFiles;
 
     @Autowired
-    public CryptoValueRecServiceEventListener(CryptoImportService cryptoImportService) {
+    public CryptoValueRecServiceScheduler(CryptoImportService cryptoImportService) {
         this.cryptoImportService = cryptoImportService;
     }
 
-    @EventListener(ApplicationReadyEvent.class)
+    @Scheduled(fixedRate = 60*60*10)
+    @Async
     public void startApp() {
-        if (isEventListenerEnabled()) {
+
+            cryptoValueCsvFiles = listFilesUsingJavaIO();
+
+
+        if (isSchedulerEnabled()) {
             log.info("Event Listener is enabled");
             log.info("Starting to read Crypto Value csv file");
             log.info("Already usefully processed file (by name) will not be imported to avoid duplication");
@@ -55,19 +61,32 @@ public class CryptoValueRecServiceEventListener {
         }
     }
 
-    private boolean isEventListenerEnabled() {
-        return isEventListenerEnabled != null && isEventListenerEnabled;
+    public Set<String> listFilesUsingJavaIO() {
+        try {
+            return Stream.of(Objects.requireNonNull(ResourceUtils.getFile("classpath:" + "crypto-values/").listFiles()))
+                    .filter(file -> !file.isDirectory())
+                    .map(File::getName)
+                    .filter(name -> name.endsWith(".csv"))
+                    .collect(Collectors.toSet());
+        } catch (FileNotFoundException e) {
+            log.error("Could not fined corresponding file in folder");
+            throw new InvalidUploadedFileException(e);
+        }
+    }
+
+    private boolean isSchedulerEnabled() {
+        return isSchedulerEnabled != null && isSchedulerEnabled;
     }
 
     private void startProcessCryptoValueCsvFiles() {
         UploadedFileEntity uploadedFileEntity = null;
         for (String cryptoValueCsvFile : cryptoValueCsvFiles) {
             try {
-                File file = ResourceUtils.getFile("classpath:" + cryptoValueCsvFile);
+                File file = ResourceUtils.getFile("classpath:" + "crypto-values/" + cryptoValueCsvFile);
                 uploadedFileEntity = cryptoImportService.processUploadedFile(convertFileToMultipartFile(file));
                 log.warn("Crypto values are imported from {}", cryptoValueCsvFile);
             } catch (Exception ex) {
-                cryptoImportService.updateStatus(uploadedFileEntity, UploadedFIleStatusEnum.PROCESSING_FAILED);
+                cryptoImportService.updateUploadedFileStatus(uploadedFileEntity, UploadedFIleStatusEnum.PROCESSING_FAILED);
                 log.warn("Could not import crypto values from {}", cryptoValueCsvFile);
                 log.error(ex.getMessage());
             }

@@ -2,6 +2,7 @@ package com.recommendationservice.domain;
 
 import java.time.LocalDateTime;
 
+import com.recommendationservice.entity.UploadedFileEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,5 +18,5 @@ public class CryptoRateDto {
     private LocalDateTime priceDate;
     private String symbol;
     private BigDecimal price;
-    private Long uploadedFileEntityId;
+    private UploadedFileEntity uploadedFileEntity;
 }

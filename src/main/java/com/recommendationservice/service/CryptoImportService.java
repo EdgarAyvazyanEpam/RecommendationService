@@ -14,11 +14,11 @@ public interface CryptoImportService {
 
     UploadedFileEntity processUploadedFile(MultipartFile file);
 
-    UploadedFileEntity saveUploadedFile(MultipartFile file);
+    UploadedFileEntity initializeUploadedFile(MultipartFile file);
 
     void processUpdateUploadedFile(MultipartFile file);
 
     UploadedFileEntity uploadedFileProcess(MultipartFile file);
 
-    void updateStatus(UploadedFileEntity uploadedFile, UploadedFIleStatusEnum status);
+    void updateUploadedFileStatus(UploadedFileEntity uploadedFile, UploadedFIleStatusEnum status);
 }

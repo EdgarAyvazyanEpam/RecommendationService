@@ -33,14 +33,12 @@ public class CryptoImportServiceImpl implements CryptoImportService {
   private final ModelMapper modelMapper;
   private final UploadedFileRepository uploadedFileRepository;
 
-  @Transactional
   @Override
-  public UploadedFileEntity processUploadedFile(
-      MultipartFile file) {
+  public UploadedFileEntity processUploadedFile(MultipartFile file) {
     if (file != null) {
       validateFile(file);
       UploadedFileEntity entity = uploadedFileProcess(file);
-      cryptoProcess(file, entity);
+      cryptoRepository.saveAll(cryptoProcess(file, entity));
       return entity;
     }else {
         throw new FileProcessingException("File processing fail for Uploaded file.");
@@ -49,9 +47,8 @@ public class CryptoImportServiceImpl implements CryptoImportService {
     @Override
     public List<CryptoEntity> cryptoProcess(MultipartFile file,
                                             UploadedFileEntity uploadedFileEntity) {
-        return cryptoRepository.saveAll(
-                csvService.readCryptoRateDtos(file, uploadedFileEntity).stream()
-                        .map(cryptoRateDto -> modelMapper.map(cryptoRateDto, CryptoEntity.class)).toList());
+        return csvService.readCryptoRateDtos(file, uploadedFileEntity).stream()
+                .map(cryptoRateDto -> modelMapper.map(cryptoRateDto, CryptoEntity.class)).toList();
     }
 
   @Override
@@ -66,10 +63,9 @@ public class CryptoImportServiceImpl implements CryptoImportService {
   }
 
     @Override
-    public void updateStatus(UploadedFileEntity uploadedFile, UploadedFIleStatusEnum status) {
+    public void updateUploadedFileStatus(UploadedFileEntity uploadedFile, UploadedFIleStatusEnum status) {
         if (uploadedFile != null) {
-            uploadedFile.setFileStatus(status);
-            uploadedFileRepository.save(uploadedFile);
+            uploadedFileRepository.updateUploadedFileById(status.getName(),uploadedFile.getId());
         }
     }
 
@@ -84,7 +80,7 @@ public class CryptoImportServiceImpl implements CryptoImportService {
         .findFirstByFileNameAndFileStatus(file.getOriginalFilename(),
             UploadedFIleStatusEnum.STORED);
     if (uploadedFileEntity.isEmpty()) {
-      return saveUploadedFile(file);
+      return initializeUploadedFile(file);
     } else {
       throw new FileProcessingException("The file already has been processed successfully in: " +
               uploadedFileEntity.get().getCreationDate() + " " + file.getOriginalFilename());
@@ -92,13 +88,12 @@ public class CryptoImportServiceImpl implements CryptoImportService {
   }
 
   @Override
-  public UploadedFileEntity saveUploadedFile(MultipartFile file) {
-    UploadedFileEntity entity = UploadedFileEntity.builder()
+  public UploadedFileEntity initializeUploadedFile(MultipartFile file) {
+      return UploadedFileEntity.builder()
         .fileName(file.getOriginalFilename())
         .fileStatus(UploadedFIleStatusEnum.STORED)
         .creationDate(LocalDateTime.now())
         .build();
-    return uploadedFileRepository.saveAndFlush(entity);
   }
   @Override
   public void processUpdateUploadedFile(MultipartFile file) {

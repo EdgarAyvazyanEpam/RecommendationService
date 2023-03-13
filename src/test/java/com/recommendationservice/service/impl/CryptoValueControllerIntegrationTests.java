@@ -50,7 +50,6 @@ public class CryptoValueControllerIntegrationTests extends MySqlDBIntegrationTes
     @Autowired
     private UploadedFileRepository uploadedFileRepository;
 
-
     @Test
     public void testGetCryptoValuesBySymbolsShouldReturnOk() throws Exception {
         removeAndFill();
@@ -210,7 +209,7 @@ public class CryptoValueControllerIntegrationTests extends MySqlDBIntegrationTes
 
     private CryptoEntity generateCryptoVale(String symbol, BigDecimal price, LocalDateTime priceDate) {
         UploadedFileEntity uploadedFileEntity = uploadedFileRepository.saveAndFlush(new UploadedFileEntity(1L, "CSV File name",
-                UploadedFIleStatusEnum.STORED, LocalDateTime.now(), new HashSet<>()));
+                UploadedFIleStatusEnum.STORED, LocalDateTime.now()));
         return CryptoEntity.builder()
                 .priceDate(priceDate)
                 .symbol(symbol)

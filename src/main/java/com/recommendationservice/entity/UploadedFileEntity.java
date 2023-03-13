@@ -7,11 +7,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Builder
 @AllArgsConstructor
@@ -19,12 +16,10 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "uploaded_file", indexes = @Index(columnList = "file_name, file_status"))
+@Table(name = "uploaded_file")
 public class UploadedFileEntity implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 6209680594148781021L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     @Column(name = "file_name")
@@ -37,9 +32,6 @@ public class UploadedFileEntity implements Serializable {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @OneToMany(mappedBy = "uploadedFileEntity")
-    private Set<CryptoEntity> cryptoEntity = new HashSet<>();
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -48,12 +40,12 @@ public class UploadedFileEntity implements Serializable {
 
         UploadedFileEntity that = (UploadedFileEntity) o;
 
-        return new EqualsBuilder().append(id, that.id).append(fileName, that.fileName).append(fileStatus, that.fileStatus).append(creationDate, that.creationDate).append(cryptoEntity, that.cryptoEntity).isEquals();
+        return new EqualsBuilder().append(id, that.id).append(fileName, that.fileName).append(fileStatus, that.fileStatus).append(creationDate, that.creationDate).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(id).append(fileName).append(fileStatus).append(creationDate).append(cryptoEntity).toHashCode();
+        return new HashCodeBuilder(17, 37).append(id).append(fileName).append(fileStatus).append(creationDate).toHashCode();
     }
 
     @Override
@@ -63,7 +55,6 @@ public class UploadedFileEntity implements Serializable {
                 .append("fileName", fileName)
                 .append("fileStatus", fileStatus)
                 .append("creationDate", creationDate)
-                .append("cryptoEntity", cryptoEntity)
                 .toString();
     }
 }

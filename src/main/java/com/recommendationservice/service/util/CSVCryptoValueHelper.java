@@ -49,7 +49,7 @@ public class CSVCryptoValueHelper {
             for (CSVRecord csvRecord : csvRecords) {
                 CryptoRateDto cryptoRateDto = new CryptoRateDto(
                         convertTimestampToLocalDateTime(csvRecord.get("timestamp")),
-                        csvRecord.get("symbol"), new BigDecimal(csvRecord.get("price")),uploadedFileEntity.getId());
+                        csvRecord.get("symbol"), new BigDecimal(csvRecord.get("price")),uploadedFileEntity);
 
                 cryptoDTOS.add(cryptoRateDto);
             }

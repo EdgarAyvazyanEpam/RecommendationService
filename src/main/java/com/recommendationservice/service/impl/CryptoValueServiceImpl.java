@@ -5,6 +5,7 @@ import com.recommendationservice.domain.CryptoResponseDto;
 import com.recommendationservice.entity.CryptoEntity;
 import com.recommendationservice.exception.exception.CryptoValueNotFoundException;
 import com.recommendationservice.repository.CryptoRepository;
+import com.recommendationservice.repository.UploadedFileRepository;
 import com.recommendationservice.service.CryptoService;
 import com.recommendationservice.service.util.CryptoHelperImpl;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -23,19 +26,25 @@ import java.util.List;
 @AllArgsConstructor
 @Service
 public class CryptoValueServiceImpl implements CryptoService {
+    private final UploadedFileRepository uploadedFileRepository;
 
     private final CryptoRepository cryptoRepository;
     private final ModelMapper modelMapper;
 
+    private final EntityManager entityManager;
+
     @Override
     public List<CryptoRateDto> getCryptoValuesBySymbol(@NotBlank @NotNull String symbol) {
         log.debug("Calling CryptoService.getCryptoValuesBySymbol method");
-        List<CryptoEntity> cryptoEntityBySymbol = cryptoRepository.findCryptoValueBySymbol(symbol.toUpperCase());
+        List<CryptoEntity> cryptoEntityBySymbol = entityManager.createQuery("""
+                select pc
+                from CryptoEntity pc
+                join fetch pc.uploadedFileEntity p where pc.symbol=:symbol
+                """, CryptoEntity.class).setParameter("symbol", symbol).getResultList();
         if (cryptoEntityBySymbol.isEmpty()) {
             throw new CryptoValueNotFoundException("The values could not be found by " + symbol);
         }
         log.info("Found the following count for the requested crypto value:" + cryptoEntityBySymbol.size());
-
         return cryptoEntityBySymbol
                 .stream()
                 .map(cryptoEntity -> modelMapper.map(cryptoEntity, CryptoRateDto.class))

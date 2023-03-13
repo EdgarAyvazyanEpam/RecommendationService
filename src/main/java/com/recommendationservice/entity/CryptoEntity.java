@@ -6,7 +6,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,10 +18,8 @@ import java.time.LocalDateTime;
 @Builder
 @Table(name = "crypto_values")
 public class CryptoEntity implements Serializable {
-    @Serial
-    private static final long serialVersionUID = -7908466892511359205L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -34,7 +31,7 @@ public class CryptoEntity implements Serializable {
     @Column(name = "price")
     private BigDecimal price;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "uploadedFileId")
     private UploadedFileEntity uploadedFileEntity;
 
