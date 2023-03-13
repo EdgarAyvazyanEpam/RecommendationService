@@ -39,11 +39,11 @@ public class CryptoValueRecServiceScheduler {
         this.cryptoImportService = cryptoImportService;
     }
 
-    @Scheduled(fixedRate = 60*60*100)
+    @Scheduled(fixedRate = 60 * 60 * 100)
     @Async
     public void startApp() {
 
-            cryptoValueCsvFiles = listFilesUsingJavaIO();
+        cryptoValueCsvFiles = listFilesUsingJavaIO();
 
 
         if (isSchedulerEnabled()) {
@@ -95,6 +95,6 @@ public class CryptoValueRecServiceScheduler {
 
     private MultipartFile convertFileToMultipartFile(File file) throws IOException {
         FileInputStream input = new FileInputStream(file);
-        return new MockMultipartFile(file.getName(),file.getName(),"text/plain",input);
+        return new MockMultipartFile(file.getName(), file.getName(), "text/plain", input);
     }
 }

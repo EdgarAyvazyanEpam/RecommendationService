@@ -113,9 +113,9 @@ public class CryptoRecommendationController {
             responseContainer = "ResponseEntity<CryptoValueResponseDto> object"
     )
     public ResponseEntity<List<CryptoResponseDto>> getNormalizedByCryptoValueByDate(@Parameter(description = "The crypto value symbol to query")
-                                                                              @NonNull @NotBlank @PathVariable("crypto") String symbol,
-                                                                              @Parameter(description = "The crypto value date to query")
-                                                                              @RequestParam("date") @DateTimeFormat(pattern = DATE_FORMAT_YYYY_MM_DD) LocalDate date) {
+                                                                                    @NonNull @NotBlank @PathVariable("crypto") String symbol,
+                                                                                    @Parameter(description = "The crypto value date to query")
+                                                                                    @RequestParam("date") @DateTimeFormat(pattern = DATE_FORMAT_YYYY_MM_DD) LocalDate date) {
 
         log.info("Requested to return the normalized value for the crypto value {} and date {}", symbol, date);
         return ResponseEntity.ok(cryptoService.getNormalizedCryptoBySymbolAndDate(symbol, date));

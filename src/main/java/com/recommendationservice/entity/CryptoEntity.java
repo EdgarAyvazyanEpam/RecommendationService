@@ -61,11 +61,6 @@ public class CryptoEntity implements Serializable {
                 .append("uploadedFileEntity", uploadedFileEntity)
                 .toString();
     }
-
-    public BigDecimal setPriceForNormalized(BigDecimal price) {
-        this.price = price;
-        return this.price;
-    }
 }
 
 

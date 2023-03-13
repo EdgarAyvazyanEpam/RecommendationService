@@ -105,7 +105,8 @@ public class CryptoValueServiceImpl implements CryptoService {
 
         return CryptoHelperImpl.cryptoValueToCryptoResponseDto(maxCryptoValue);
     }
-@Override
+
+    @Override
     public List<CryptoResponseDto> getNormalizedCryptoBySymbolAndDate(String symbol, LocalDate date) {
 
         log.debug("Calling CryptoValueService.getNormalizedByCryptoValueAndDate method");
@@ -140,10 +141,11 @@ public class CryptoValueServiceImpl implements CryptoService {
 
     }
 
-    private Double normalization(Double value, Double max, Double min){
-        return (value - min)/(max - min);
+    private Double normalization(Double value, Double max, Double min) {
+        return (value - min) / (max - min);
     }
-@Override
+
+    @Override
     public List<CryptoResponseDto> getNormalizedCryptoBySymbol(String symbol) {
         log.debug("Calling CryptoValueService.getNormalizedCryptoValue method");
         List<CryptoEntity> cryptoValueBySymbol = cryptoRepository.findCryptoValueBySymbol(symbol);
