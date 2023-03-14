@@ -3,6 +3,7 @@ package com.recommendationservice.service.util;
 import com.recommendationservice.domain.CryptoResponseDto;
 import com.recommendationservice.entity.CryptoEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CryptoHelperImpl {
@@ -14,6 +15,6 @@ public class CryptoHelperImpl {
     }
 
     public static List<CryptoResponseDto> cryptoValuesToCryptoResponseDto(List<CryptoEntity> list) {
-        return list.stream().map(CryptoHelperImpl::cryptoValueToCryptoResponseDto).toList();
+        return new ArrayList<>(list.stream().map(CryptoHelperImpl::cryptoValueToCryptoResponseDto).toList());
     }
 }

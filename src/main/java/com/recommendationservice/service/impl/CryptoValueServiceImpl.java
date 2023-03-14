@@ -15,18 +15,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.OptionalDouble;
-import java.util.stream.Collectors;
 
-import static java.math.BigDecimal.*;
+import static java.math.BigDecimal.valueOf;
 
 @Slf4j
 @Validated
@@ -130,7 +129,7 @@ public class CryptoValueServiceImpl implements CryptoService {
 
         List<CryptoEntity> collect = new ArrayList<>();
         for (CryptoEntity cryptoEntity : cryptoValueBySymbol) {
-            if (valueOf(normalization(cryptoEntity.getPrice().doubleValue(), max, min)).doubleValue() > 0.0) {
+            if (valueOf(normalization(cryptoEntity.getPrice().doubleValue(), max, min, cryptoEntity.getPriceDate())).doubleValue() > 0.0) {
                 collect.add(cryptoEntity);
             }
         }
@@ -140,12 +139,20 @@ public class CryptoValueServiceImpl implements CryptoService {
         }
 
         List<CryptoResponseDto> cryptoResponseDtos = CryptoHelperImpl.cryptoValuesToCryptoResponseDto(collect);
-        cryptoResponseDtos.sort(Collections.reverseOrder());
+        cryptoResponseDtos.sort(Comparator.comparing(CryptoResponseDto::getPrice)
+                .thenComparing(CryptoResponseDto::getPriceDate));
+        Collections.reverse(cryptoResponseDtos);
+
         return cryptoResponseDtos;
     }
 
-    private Double normalization(Double value, Double max, Double min) {
-        return (value - min)/(max - min); //(max-min)/min
+    private Double normalization(Double value, Double max, Double min, LocalDateTime date) {
+        Double result = (value - min)/(max - min);//(max-min)/min
+        if (result.isNaN()) {
+            log.error("Normalized crypto value not found by this date:" + date);
+            throw new CryptoValueNotFoundException("Normalized crypto value not found by this date:" + date);
+        }
+        return result;
     }
 
     @Override
@@ -168,7 +175,7 @@ public class CryptoValueServiceImpl implements CryptoService {
 
         List<CryptoEntity> collect = new ArrayList<>();
         for (CryptoEntity cryptoEntity : cryptoValueBySymbol) {
-            if (valueOf(normalization(cryptoEntity.getPrice().doubleValue(), max, min)).doubleValue() > 0.0) {
+            if (valueOf(normalization(cryptoEntity.getPrice().doubleValue(), max, min, cryptoEntity.getPriceDate())).doubleValue() > 0.0) {
                 collect.add(cryptoEntity);
             }
         }
@@ -178,7 +185,10 @@ public class CryptoValueServiceImpl implements CryptoService {
         }
 
         List<CryptoResponseDto> cryptoResponseDtos = CryptoHelperImpl.cryptoValuesToCryptoResponseDto(collect);
-        cryptoResponseDtos.sort(Collections.reverseOrder());
+        cryptoResponseDtos.sort(Comparator.comparing(CryptoResponseDto::getPrice)
+                .thenComparing(CryptoResponseDto::getPriceDate));
+        Collections.reverse(cryptoResponseDtos);
+
         return cryptoResponseDtos;
     }
 }
